@@ -1,7 +1,22 @@
 import Header from "../components/layout/Header";
 
+import SatelliteCard 
+from "../features/satellites/components/SatelliteCard";
+
+import {
+useSatellites
+} from "../features/satellites/hooks/useSatellites";
+
 
 export default function Dashboard(){
+
+
+const {
+data:satellites,
+isLoading
+}=useSatellites();
+
+
 
 return (
 
@@ -19,24 +34,58 @@ text-white
 <main className="p-8">
 
 
-<h1 className="
+<h1
+className="
 text-3xl
 font-bold
-">
+mb-8
+"
+>
 
 Satellite Operations Dashboard
 
 </h1>
 
 
-<p className="
-text-slate-400
-mt-2
-">
 
-Mission control interface
+{
+isLoading ?
 
+<p>
+Loading satellites...
 </p>
+
+
+:
+
+<div
+className="
+grid
+md:grid-cols-3
+gap-6
+"
+>
+
+{
+satellites?.map(
+satellite=>(
+
+<SatelliteCard
+
+key={satellite.id}
+
+satellite={satellite}
+
+/>
+
+)
+
+)
+}
+
+</div>
+
+}
 
 
 </main>
