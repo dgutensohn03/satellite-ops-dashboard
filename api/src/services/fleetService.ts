@@ -1,8 +1,15 @@
-import { fleet } from "../config/fleet";
-import { getTLE } from "./celestrak";
-import { calculatePosition } from "./propagation";
+import { fleet } from "../config/fleet.js";
+import { getTLE } from "./celestrak.js";
+import { calculatePosition } from "./propagation.js";
+import type { SatellitePosition } from "./propagation.js";
 
-export async function getFleet() {
+export interface SatelliteTelemetry {
+  name: string;
+  noradId: number;
+  position: SatellitePosition | null;
+}
+
+export async function getFleet(): Promise<SatelliteTelemetry[]> {
   return Promise.all(
     fleet.map(async (satellite) => {
       const tle = await getTLE(satellite.noradId);
@@ -10,9 +17,9 @@ export async function getFleet() {
       const position = calculatePosition(tle);
 
       return {
-        noradId: satellite.noradId,
         name: satellite.name,
-        ...position
+        noradId: satellite.noradId,
+        position
       };
     })
   );

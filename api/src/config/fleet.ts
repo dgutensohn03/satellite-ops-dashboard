@@ -1,4 +1,9 @@
-export const fleet = [
+export interface SatelliteConfig {
+  name: string;
+  noradId: number;
+}
+
+export const fleet: SatelliteConfig[] = [
   {
     noradId: 25544,
     name: "ISS (ZARYA)",

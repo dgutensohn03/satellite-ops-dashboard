@@ -7,7 +7,7 @@ export interface SatellitePosition {
   velocity: number;
 }
 
-export function calculatePosition(tle: string): SatellitePosition {
+export function calculatePosition(tle: string): SatellitePosition | null {
   const lines = tle.trim().split("\n");
 
   if (lines.length < 3) {
@@ -22,6 +22,10 @@ export function calculatePosition(tle: string): SatellitePosition {
   const now = new Date();
 
   const positionAndVelocity = satellite.propagate(satrec, now);
+
+  if (!positionAndVelocity) {
+    return null;
+  }
 
   if (!positionAndVelocity.position || !positionAndVelocity.velocity) {
     throw new Error("Unable to propagate orbit");
