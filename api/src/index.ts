@@ -22,7 +22,7 @@ async function start() {
     });
 
     await app.register(satelliteRoutes, {
-      prefix: "/api/satellites"
+      prefix: "/api"
     });
 
     await app.listen({
