@@ -9,7 +9,7 @@ async function start() {
         origin: true
     });
     app.register(satelliteRoutes, {
-        prefix: "/api/satellites"
+        prefix: "/api"
     });
     await app.listen({
         port: 4000,
