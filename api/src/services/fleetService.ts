@@ -7,20 +7,40 @@ export interface SatelliteTelemetry {
   name: string;
   noradId: number;
   position: SatellitePosition | null;
+  status: "online" | "unavailable";
+  error?: string;
 }
 
 export async function getFleet(): Promise<SatelliteTelemetry[]> {
   return Promise.all(
     fleet.map(async (satellite) => {
-      const tle = await getTLE(satellite.noradId);
+      try {
+        const tle = await getTLE(satellite.noradId);
+        const position = calculatePosition(tle);
 
-      const position = calculatePosition(tle);
+        return {
+          name: satellite.name,
+          noradId: satellite.noradId,
+          position,
+          status: position ? "online" : "unavailable"
+        };
+      } catch (error) {
+        console.error(
+          `Failed to fetch telemetry for ${satellite.name}:`,
+          error
+        );
 
-      return {
-        name: satellite.name,
-        noradId: satellite.noradId,
-        position
-      };
+        return {
+          name: satellite.name,
+          noradId: satellite.noradId,
+          position: null,
+          status: "unavailable",
+          error:
+            error instanceof Error
+              ? error.message
+              : "Unknown error"
+        };
+      }
     })
   );
 }

@@ -2,21 +2,24 @@ export async function getTLE(noradId: number) {
   const url =
     `https://celestrak.org/NORAD/elements/gp.php?CATNR=${noradId}&FORMAT=TLE`;
 
-  try {
-    const response = await fetch(url, {
-      signal: AbortSignal.timeout(15000)
-    });
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": "satellite-ops-dashboard"
+    },
+    signal: AbortSignal.timeout(15000)
+  });
 
-    if (!response.ok) {
-      throw new Error(
-        `CelesTrak request failed: ${response.status}`
-      );
-    }
-
-    return await response.text();
-
-  } catch (error) {
-    console.error("CelesTrak fetch error:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(
+      `CelesTrak returned ${response.status}`
+    );
   }
+
+  const tle = await response.text();
+
+  if (!tle.trim()) {
+    throw new Error("Empty TLE response");
+  }
+
+  return tle;
 }
